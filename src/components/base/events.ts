@@ -12,7 +12,6 @@ export interface IEvents {
     emit<T extends object>(event: string, data?: T): void;
     trigger<T extends object>(event: string, context?: Partial<T>): (data: T) => void;
 }
-
 /**
  * Брокер событий, классическая реализация
  * В расширенных вариантах есть возможность подписаться на все события
@@ -24,7 +23,6 @@ export class EventEmitter implements IEvents {
     constructor() {
         this._events = new Map<EventName, Set<Subscriber>>();
     }
-
     /**
      * Установить обработчик на событие
      */
@@ -34,7 +32,6 @@ export class EventEmitter implements IEvents {
         }
         this._events.get(eventName)?.add(callback);
     }
-
     /**
      * Снять обработчик с события
      */
@@ -46,7 +43,6 @@ export class EventEmitter implements IEvents {
             }
         }
     }
-
     /**
      * Инициировать событие с данными
      */
@@ -57,21 +53,18 @@ export class EventEmitter implements IEvents {
             }
         });
     }
-
     /**
      * Слушать все события
      */
     onAll(callback: (event: EmitterEvent) => void) {
         this.on("*", callback);
     }
-
     /**
      * Сбросить все обработчики
      */
     offAll() {
         this._events = new Map<string, Set<Subscriber>>();
     }
-
     /**
      * Сделать коллбек триггер, генерирующий событие при вызове
      */
@@ -84,4 +77,3 @@ export class EventEmitter implements IEvents {
         };
     }
 }
-

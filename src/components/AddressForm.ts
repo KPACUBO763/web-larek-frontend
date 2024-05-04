@@ -7,7 +7,7 @@ export class AddressForm extends Form<IAddressForm> {
         super(container, events);
     }
 
-    set phone(value: string) {
+    set address(value: string) {
         (this.container.elements.namedItem('address') as HTMLInputElement).value = value;
     }
 }

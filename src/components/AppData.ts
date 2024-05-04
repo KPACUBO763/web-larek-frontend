@@ -1,13 +1,13 @@
 import {Model} from "./base/Model";
-import {FormErrors, IAppState, IProductItem, IProductList, IOrder, IAddressForm, IСontactsForm} from "../types";
+import {FormErrors, IAppState, IProduct, IOrder, IAddressForm, IСontactsForm} from "../types";
 
 export class AppState extends Model<IAppState> {
     basket: string[] = [];
-    catalog: IProductItem[];
+    catalog: IProduct[];
     order: IOrder;
     formErrors: FormErrors = {};
 
-    getCatalog(items: IProductList[]) {};
+    getCatalog(items: IProduct[]) {};
 
     addProduct() {};
 

@@ -15,6 +15,32 @@
 - src/utils/constants.ts — файл с константами
 - src/utils/utils.ts — файл с утилитами
 
+## Установка и запуск
+Для установки и запуска проекта необходимо выполнить команды
+
+```
+npm install
+npm run start
+```
+
+или
+
+```
+yarn
+yarn start
+```
+## Сборка
+
+```
+npm run build
+```
+
+или
+
+```
+yarn build
+```
+
 ## Описание данных
 
 ### Интерфейсы и типы
@@ -22,15 +48,21 @@
 ```typescript
 export type Category = "софт-скил" | "другое" | "дополнительное" | "кнопка" | "хард-скил";
 
+// отображение данных на странице
+export interface IPage {
+    counter: number;
+    catalog: HTMLElement[]
+};
+
 // состояние данных в приложении
 export interface IAppState {
-    catalog: IProductItem[];
+    catalog: IProduct[];
     basket: string[];
-    order: IOrder | null;
+    order: IOrder | null
 };
 
 // товар
-export interface IProductItem {
+export interface IProduct {
     id: string;
     description: string;
     image: string;
@@ -48,15 +80,9 @@ export interface ICard {
     price: number | null
 };
 
-// список товаров
-export interface IProductList {
-    total: number;
-    items: IProductItem[]
-};
-
 // модалка
 export interface IModalData {
-    content: HTMLElement;
+    content: HTMLElement
 };
 
 // модалка с адресом
@@ -102,12 +128,12 @@ export type FormErrors = Partial<Record<keyof IOrder, string>>
 ### Базовые классы
 
 - Класс **Api** отвечает за взаимодействие с сервером.
-    **Методы:**
+**Методы:**
     - `get(uri: string)` - отправляет GET запросы на сервер;
     - `post(uri: string, data: object, method: ApiPostMethods = 'POST')` - отправляет POST запросы на сервер.
 
 - Абстрактный класс **Component** отвечает за взаимодействие с DOM.
-    **Методы:**
+**Методы:**
     - `toggleClass(element: HTMLElement, className: string, force?: boolean)` - переключает класс;
     - `setText(element: HTMLElement, value: unknown)` - устанавливает текстовое содержимое;
     - `setDisabled(element: HTMLElement, state: boolean)` - меняет статус блокировки;
@@ -117,7 +143,7 @@ export type FormErrors = Partial<Record<keyof IOrder, string>>
     - `render(data?: Partial<T>): HTMLElement` - возвращает корневой DOM-элемент.
 
 - Класс **EventEmitter** отвечает за работу событий.
-    **Методы:**
+**Методы:**
     - `on<T extends object>(eventName: EventName, callback: (event: T) => void)` - устанавливает обработчик на событие;
     - `off(eventName: EventName, callback: Subscriber)` - снимает обработчик с события;
     - `emit<T extends object>(eventName: string, data?: T)` - инициирует событие с данными;
@@ -126,14 +152,13 @@ export type FormErrors = Partial<Record<keyof IOrder, string>>
     - `trigger<T extends object>(eventName: string, context?: Partial<T>)` - делает коллбек триггер, генерирующий событие при вызове.
 
 - Абстрактный класс **Model** отвечает за работу с данными.
-    **Методы:**
+**Методы:**
     - `emitChanges(event: string, payload?: object)` - сообщает всем, что модель поменялась.
 
 
-### Слой Model
-
+### Слой данных (Model)
 - Класс **AppState** отвечает за управление данными.
-    **Методы:**
+**Методы:**
     - `getCatalog(items: IProductList[])` - возвращает список товаров;
     - `addProduct()` - добавляет товар в корзину;
     - `removeProduct()` - удаляет товар из корзины;
@@ -143,31 +168,47 @@ export type FormErrors = Partial<Record<keyof IOrder, string>>
     - `resetBasket()` - очищает корзину;
     - `resetDataOrder()` - удаляет данные о покупателе.
 
-- Класс **WebLarekAPI** отвечает за взаимодействие с сервером и
+### Слой коммуникаций
+- Класс **WebLarekAPI** соединяет слой данных (Model) и слой отображения (View).
+**Методы:**
+    - `getProductItem(id: string)` - возвращает товар;
+    - `getProductList()` - возвращает список товаров.
 
+### Слой отображения (View)
+- Класс **Page** отвечает за отображение данных на странице.
+**Методы:**
+    - `set counter(value: number)` - устанавливает счетчик товаров;
+    - `set catalog(items: HTMLElement[])` - устанавливает каталог товаров;
+    - `set locked(value: boolean)` - устанавливает блокировку.
 
-## Установка и запуск
-Для установки и запуска проекта необходимо выполнить команды
+- Класс **basket** отвечает за отображение данных в корзине.
+**Методы:**
+    - `set items(items: HTMLElement[])` - устанавливает добавленные товары;
+    - `set price(price: number)` - устанавливает общую сумму корзины.
 
-```
-npm install
-npm run start
-```
+- Класс **Form** отвечает за установку контента в формах и его валидацию.
+**Методы:**
+    - `onInputChange(field: keyof T, value: string)` - изменяет значение в поле;
+    - `set valid(value: boolean)` - отображает валидность;
+    - `set errors(value: string)` - устанавливает ошибку;
+    - `render(state: Partial<T> & IFormState)` - отображает форму.
 
-или
+- Класс **ISuccess** отвечает за отображение суммы списанных средств в окне успешного заказа.
+**Методы:**
+    - `set price(price: number)` - устанавливает сумму списанных средств.
 
-```
-yarn
-yarn start
-```
-## Сборка
+- Класс **Modal** отвечает за работу модальных окон.
+**Методы:**
+    - `set content(value: HTMLElement)` - устанавливает контент;
+    - `open()` - открывает модальное окно;
+    - `close()` - закрывает модальное окно;
+    - `render(data: IModalData)` - отображает модальное окно.
 
-```
-npm run build
-```
+- Класс **AddressForm** отвечает за форму с выбором способа оплаты и адреса доставки.
+**Методы:**
+    - `set address(value: string)` - устанавливает адрес доставки.
 
-или
-
-```
-yarn build
-```
+- Класс **ContactsForm** отвечает за форму с указанием телефона и почты покупателя.
+**Методы:**
+    - `set phone(value: string)` - устанавливает номер телефона;
+    -  `set email(value: string)` - устанавливает почту.

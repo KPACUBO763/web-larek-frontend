@@ -1,14 +1,20 @@
 export type Category = "софт-скил" | "другое" | "дополнительное" | "кнопка" | "хард-скил";
 
+// отображение данных на странице
+export interface IPage {
+    counter: number;
+    catalog: HTMLElement[]
+}
+
 // состояние данных в приложении
 export interface IAppState {
-    catalog: IProductItem[];
+    catalog: IProduct[];
     basket: string[];
     order: IOrder | null;
 };
 
 // товар
-export interface IProductItem {
+export interface IProduct {
     id: string;
     description: string;
     image: string;
@@ -24,12 +30,6 @@ export interface ICard {
     title: string;
     category: Category;
     price: number | null
-};
-
-// список товаров
-export interface IProductList {
-    total: number;
-    items: IProductItem[]
 };
 
 // модалка

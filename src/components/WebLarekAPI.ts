@@ -1,9 +1,9 @@
 import { Api, ApiListResponse } from './base/api';
-import {IOrder, IProductList, IProductItem} from "../types";
+import {IOrder, IProduct} from "../types";
 
 export interface IWebLarekAPI {
-    getProductList: () => Promise<IProductList[]>;
-    getProductItem: (id: string) => Promise<IProductItem>;
+    getProductList: () => Promise<IProduct[]>;
+    getProductItem: (id: string) => Promise<IProduct>;
 }
 
 export class WebLarekAPI extends Api implements IWebLarekAPI {
@@ -14,17 +14,17 @@ export class WebLarekAPI extends Api implements IWebLarekAPI {
         this.cdn = cdn;
     }
 
-    getProductItem(id: string): Promise<IProductItem> {
-        return this.get(`/api/weblarek/${id}`).then(
-            (item: IProductItem) => ({
+    getProductItem(id: string): Promise<IProduct> {
+        return this.get(`/product/${id}`).then(
+            (item: IProduct) => ({
                 ...item,
                 image: this.cdn + item.image,
             })
         );
     }
 
-    getProductList(): Promise<IProductItem[]> {
-        return this.get('/api/weblarek').then((data: ApiListResponse<IProductItem>) =>
+    getProductList(): Promise<IProduct[]> {
+        return this.get('/product').then((data: ApiListResponse<IProduct>) =>
             data.items.map((item) => ({
                 ...item,
                 image: this.cdn + item.image

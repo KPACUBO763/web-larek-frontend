@@ -30,7 +30,6 @@ yarn
 yarn start
 ```
 ## Сборка
-
 ```
 npm run build
 ```
@@ -43,41 +42,32 @@ yarn build
 
 ## Структура проекта
 Проектная работа построена на основе паттерна MVP(Model-View-Presenter) и состоит из следующих слоев:
-- Слой данных (Model): между сервером и интерфейсом есть данные, в которых отражена вся ценность нашего приложения.
-- Слой отображения (View): интерфейс для взаимодействия с пользователем. Его задача — выводить что-то на экран и генерировать события с действиями пользователя.
-- Слой представления (Presenter): соединяет слой отображения (View) и слой данных (Model).
+- Слой данных (Model): предоставляет данные для пользовательского интерфейса.
+- Слой представления (View): реализует отображение данных и маршрутизацию пользовательских команд или событий Presenter`у.
+- Слой Presenter: предназначен для управления и обменом данными между View и Model.
 
 ## Описание данных
 
 ### Интерфейсы и типы
 ```
-export type Category = "софт-скил" | "другое" | "дополнительное" | "кнопка" | "хард-скил";
+type Category = "софт-скил" | "другое" | "дополнительное" | "кнопка" | "хард-скил";
 
 // отображение данных на странице
-export interface IPage {
+interface IPage {
     counter: number;
     catalog: HTMLElement[]
 };
 
 // состояние данных в приложении
-export interface IAppState {
+interface IAppState {
     catalog: IProduct[];
     basket: string[];
     order: IOrder | null
 };
 
 // товар
-export interface IProduct {
+interface IProduct {
     id: string;
-    description: string;
-    image: string;
-    title: string;
-    category: Category;
-    price: number | null
-};
-
-// карточка
-export interface ICard {
     description: string;
     image: string;
     title: string;
@@ -86,48 +76,46 @@ export interface ICard {
 };
 
 // модалка
-export interface IModalData {
+interface IModalData {
     content: HTMLElement
 };
 
 // модалка с адресом
-export interface IAddressForm {
+interface IAddressForm {
     payment: string;
     address: string
 };
 
 // модалка с контактами
-export interface IСontactsForm {
+interface IСontactsForm {
     email: string;
     phone: string
 };
 
 // оформление заказа
-export interface IOrder extends IAddressForm, IСontactsForm {
-    items: string | string[];
-    total: number
+interface IOrder extends IAddressForm, IСontactsForm {
+    price: number
 };
 
 // успешный заказ
-export interface ISuccess {
-    id: string;
+interface ISuccess {
     total: number
 };
 
 // состояние формы
-export interface IFormState {
+interface IFormState {
     valid: boolean;
     errors: string[]
 };
 
 // корзина
-export interface IBasketView {
+interface IBasketView {
     items: HTMLElement[];
     price: number
 };
 
 // ошибка в форме
-export type FormErrors = Partial<Record<keyof IOrder, string>>
+type FormErrors = Partial<Record<keyof IOrder, string>>
 ```
 
 ### Базовые классы
@@ -171,13 +159,13 @@ export type FormErrors = Partial<Record<keyof IOrder, string>>
     - `resetBasket()` - очищает корзину;
     - `resetDataOrder()` - удаляет данные о покупателе.
 
-### Слой представления (Presenter)
-- Класс **WebLarekAPI** соединяет слой данных (Model) и слой отображения (View).
+### Слой Presenter
+- Класс **WebLarekAPI** управляет данными между слоем данных (Model) и слоем представления (View).
 **Методы:**
     - `getProductItem(id: string)` - возвращает товар;
     - `getProductList()` - возвращает список товаров.
 
-### Слой отображения (View)
+### Слой представления (View)
 - Класс **Page** отвечает за отображение данных на странице.
 **Методы:**
     - `set counter(value: number)` - устанавливает счетчик товаров;

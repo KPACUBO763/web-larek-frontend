@@ -1,23 +1,19 @@
 import {Component} from "../base/Component";
 import {ensureElement} from "../../utils/utils";
-import {ISuccess} from "../../types";
 
-interface ISuccessActions {
-    onClick: () => void;
-}
+interface ISuccess {
+    total: number
+};
 
 export class Success extends Component<ISuccess> {
-    protected _close: HTMLElement;
+    protected _total: HTMLElement;
 
-    constructor(container: HTMLElement, actions: ISuccessActions) {
+    constructor(container: HTMLElement) {
         super(container);
+        this._total = ensureElement<HTMLParagraphElement>('.order-success__description', this.container)
+    };
 
-        this._close = ensureElement<HTMLElement>('.state__action', this.container);
-
-        if (actions?.onClick) {
-            this._close.addEventListener('click', actions.onClick);
-        }
+    set total(total: number) {
+        this.setText(this._total, total)
     }
-
-    set price(price: number) {}
 }

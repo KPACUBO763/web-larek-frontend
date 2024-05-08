@@ -1,31 +1,65 @@
 import {Model} from "./base/Model";
-import {FormErrors, IAppState, IProduct, IOrder, IAddressForm, IСontactsForm} from "../types";
+import {FormErrors, IAppState, IProduct, IOrder, Category} from "../types";
+
+export class Product extends Model<IProduct> {
+    id: string;
+    description: string;
+    image: string;
+    title: string;
+    category: Category;
+    price: number | null
+}
 
 export class AppState extends Model<IAppState> {
-    basket: string[] = [];
+    basket: IProduct[];
     catalog: IProduct[];
-    order: IOrder;
+    order: IOrder = {
+        payment: 'card',
+        address: '',
+        email: '',
+        phone: '',
+        items: [],
+        total: 0
+    };
     formErrors: FormErrors = {};
 
-    getCatalog(items: IProduct[]) {};
+    setCatalog(items: IProduct[]) {
+        this.catalog = items.map(item => new Product(item, this.events));
+        this.emitChanges('items:changed', { catalog: this.catalog });
+    };
 
-    addProduct() {};
+    addProduct(item: Product) {
+        this.basket.push(item)
+    };
 
-    removeProduct() {};
+    removeProduct(id: string) {
+        this.basket = this.basket.filter(item => item.id !== id)
+    };
 
     get countProducts() {
-        return
+        return this.basket.length
     };
 
     get priceProducts() {
-        return
+        return this.basket.reduce((total, item) => total + item.price, 0);
     };
-
+    // TODO ...
     setDataOrder() {};
 
-    resetBasket() {};
+    resetBasket() {
+        this.basket = []
+    };
 
-    resetDataOrder() {};
+    resetDataOrder() {
+        this.order = {
+            payment: 'card',
+            address: '',
+            email: '',
+            phone: '',
+            items: [],
+            total: 0
+        }
+    };
 
     validateOrder() {
         const errors: typeof this.formErrors = {};

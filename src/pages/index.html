@@ -19,15 +19,15 @@
 		<header class="header">
 			<div class="header__container">
 				<a class="header__logo" href="/">
-					<img class="header__logo-image" src="<%=require('../images/logo.svg')%>" alt="Film! logo" />
+					<img class="header__logo-image" src="<%=require('../images/logo.svg')%>" alt="Film! logo">
 				</a>
 				<button class="header__basket">
-					<span class="header__basket-counter">0</span>
+					<span class="header__basket-counter" data-element="basket" data-component="basket">0</span>
 				</button>
 			</div>
 		</header>
 
-		<main class="gallery"></main>
+		<main class="gallery" data-element="catalog" data-component="catalog"></main>
 	</div>
 
 	<div class="modal" id="modal-container">

@@ -1,15 +1,9 @@
 export type Category = "софт-скил" | "другое" | "дополнительное" | "кнопка" | "хард-скил";
 
-// отображение данных на странице
-export interface IPage {
-    counter: number;
-    catalog: HTMLElement[]
-}
-
 // состояние данных в приложении
 export interface IAppState {
     catalog: IProduct[];
-    basket: string[];
+    basket: IProduct[];
     order: IOrder | null;
 };
 
@@ -20,21 +14,7 @@ export interface IProduct {
     image: string;
     title: string;
     category: Category;
-    price: number | null
-};
-
-// карточка
-export interface ICard {
-    description: string;
-    image: string;
-    title: string;
-    category: Category;
-    price: number | null
-};
-
-// модалка
-export interface IModalData {
-    content: HTMLElement;
+    price: number | null;
 };
 
 // модалка с адресом
@@ -51,13 +31,7 @@ export interface IСontactsForm {
 
 // оформление заказа
 export interface IOrder extends IAddressForm, IСontactsForm {
-    items: string | string[];
-    total: number
-};
-
-// успешный заказ
-export interface ISuccess {
-    id: string;
+    items: string[];
     total: number
 };
 
@@ -70,7 +44,7 @@ export interface IFormState {
 // корзина
 export interface IBasketView {
     items: HTMLElement[];
-    price: number
+    total: number
 };
 
 // ошибка в форме

@@ -25,16 +25,19 @@ export class Page extends Component<IPage> {
         this._basket.addEventListener('click', () => {
             this.events.emit('basket:open');
         });
-    }
+    };
 
-    set counter(value: number) {
-        this.setText(this._counter, value);
-    }
-
+    // устанавливливает каталог на странице
     set catalog(items: HTMLElement[]) {
         this._catalog.replaceChildren(...items);
-    }
+    };
 
+    // устанавливливает счетчик на корзине
+    set counter(value: number) {
+        this.setText(this._counter, value);
+    };
+
+    // блокирует страницу
     set locked(value: boolean) {
         if (value) {
             this._wrapper.classList.add('page__wrapper_locked');

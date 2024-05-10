@@ -1,6 +1,5 @@
 export abstract class Component<T> {
-    protected constructor(protected readonly container: HTMLElement) {
-    }
+    protected constructor(protected readonly container: HTMLElement) {}
 
     // Переключить класс
     toggleClass(element: HTMLElement, className: string, force?: boolean) {
@@ -41,7 +40,7 @@ export abstract class Component<T> {
             }
         }
     }
-    
+
     // Вернуть корневой DOM-элемент
     render(data?: Partial<T>): HTMLElement {
         Object.assign(this as object, data ?? {});

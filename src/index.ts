@@ -9,10 +9,9 @@ import {cloneTemplate, createElement, ensureElement} from "./utils/utils";
 import {Modal} from "./components/common/Modal";
 import {Basket} from "./components/common/Basket";
 import {Card} from './components/Card';
-import {IOrder} from './types';
 import {Address} from './components/Address';
 import {Contacts} from './components/Contacts';
-import {Success} from './components/common/ISuccess';
+import {Success} from './components/common/Success';
 
 
 const events = new EventEmitter();
@@ -28,7 +27,7 @@ const cardCatalogTemplate = ensureElement<HTMLTemplateElement>('#card-catalog');
 const cardPreviewTemplate = ensureElement<HTMLTemplateElement>('#card-preview');
 const cardBasketTemplate = ensureElement<HTMLTemplateElement>('#card-basket');
 const basketTemplate = ensureElement<HTMLTemplateElement>('#basket');
-const orderTemplate = ensureElement<HTMLTemplateElement>('#order');
+const addressTemplate = ensureElement<HTMLTemplateElement>('#order');
 const contactsTemplate = ensureElement<HTMLTemplateElement>('#contacts');
 const successTemplate = ensureElement<HTMLTemplateElement>('#success');
 
@@ -41,7 +40,7 @@ const modal = new Modal(ensureElement<HTMLElement>('#modal-container'), events);
 
 // Переиспользуемые части интерфейса
 const basket = new Basket(cloneTemplate(basketTemplate), events);
-const order = new Address(cloneTemplate(orderTemplate), events);
+const address = new Address(cloneTemplate(addressTemplate), events);
 const contacts = new Contacts(cloneTemplate(contactsTemplate), events);
 
 // Дальше идет бизнес-логика
@@ -62,18 +61,40 @@ api.getProductList()
     .then(appData.setCatalog.bind(appData))
     .catch(err => console.error(err));
 
+// вывести каталог на страницу
 events.on('items:changed', () => {
     page.catalog = appData.catalog.map(item => {
         const cardCatalog = new Card(cloneTemplate(cardCatalogTemplate), {
-            onClick: () => events.emit('card:select', item),
+            onClick: () => events.emit('card:select', item)
         });
+
         return cardCatalog.render({
             id: item.id,
-            title: item.title,
-            image: item.image,
             description: item.description,
+            image: item.image,
+            title: item.title,
             category: item.category,
             price: item.price
         })
-    });
+    })
 });
+
+// модалка выбранной карточки
+events.on('card:select', (item: Product) => {
+    events.emit('modal:open');
+    const cardItem = new Card(cloneTemplate(cardPreviewTemplate), {
+        onClick: () => events.emit('item:addBasket', item)
+    });
+
+    modal.render({
+        content: cardItem.render({
+            id: item.id,
+            description: item.description,
+            image: item.image,
+            title: item.title,
+            category: item.category,
+            price: item.price,
+            selected: item.selected
+        })
+    })
+})

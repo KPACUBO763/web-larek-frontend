@@ -1,5 +1,5 @@
 import {Model} from "./base/Model";
-import {FormErrors, IAppState, IProduct, IOrder, Category} from "../types";
+import {FormErrors, IAppState, IProduct, IOrder, IValidForm, Category} from "../types";
 
 export class Product extends Model<IProduct> {
     id: string;
@@ -7,52 +7,20 @@ export class Product extends Model<IProduct> {
     image: string;
     title: string;
     category: Category;
-    price: number | null
+    price: number | null;
+    selected?: boolean
 }
 
 export class AppState extends Model<IAppState> {
-    basket: IProduct[];
     catalog: IProduct[];
-    order: IOrder = {
-        payment: 'card',
-        address: '',
-        email: '',
-        phone: '',
-        items: [],
-        total: 0
-    };
+    basket: IProduct[] = [];
+    order: IOrder = this.getEmptyOrder();
     formErrors: FormErrors = {};
 
-    setCatalog(items: IProduct[]) {
-        this.catalog = items.map(item => new Product(item, this.events));
-        this.emitChanges('items:changed', { catalog: this.catalog });
-    };
-
-    addProduct(item: Product) {
-        this.basket.push(item)
-    };
-
-    removeProduct(id: string) {
-        this.basket = this.basket.filter(item => item.id !== id)
-    };
-
-    get countProducts() {
-        return this.basket.length
-    };
-
-    get priceProducts() {
-        return this.basket.reduce((total, item) => total + item.price, 0);
-    };
-    // TODO ...
-    setDataOrder() {};
-
-    resetBasket() {
-        this.basket = []
-    };
-
-    resetDataOrder() {
-        this.order = {
-            payment: 'card',
+    // шаблон для установки пустых значений
+    getEmptyOrder(): IOrder {
+        return {
+            payment: '',
             address: '',
             email: '',
             phone: '',
@@ -61,16 +29,80 @@ export class AppState extends Model<IAppState> {
         }
     };
 
-    validateOrder() {
+    // установка каталога
+    setCatalog(items: IProduct[]) {
+        this.catalog = items.map(item => new Product(item, this.events));
+        this.emitChanges('items:changed', { catalog: this.catalog });
+    };
+
+    // добавить товар в корзиину
+    add(item: IProduct) {
+        this.basket.push(item)
+    };
+
+    // удалить товар из корзины
+    remove(id: string) {
+        this.basket = this.basket.filter(item => item.id !== id)
+    };
+
+    // возвращает кол-во продуктов в корзине
+    get count() {
+        return this.basket.length
+    };
+
+    // возвращает сумму корзины
+    get total() {
+        return this.basket.reduce((total, item) => total + item.price, 0);
+    };
+
+    // установка данных покупателя
+    setDataOrder(field: keyof IValidForm, value: string) {
+        this.order[field] = value;
+    }
+
+    // очистка корзины
+    resetBasket() {
+        this.basket = []
+    };
+
+    // очистка данных покупателя
+    resetDataOrder() {
+        this.order = this.getEmptyOrder()
+    };
+
+    // валидация формы адреса
+    validateAddress() {
         const errors: typeof this.formErrors = {};
+
+        if (!this.order.address) {
+            errors.address = 'Необходимо указать адрес';
+        }
+
+        if (!this.order.payment) {
+            errors.payment = 'Необходимо указать способ оплаты';
+        }
+
+        this.formErrors = errors;
+        this.events.emit('addressErrors:change', this.formErrors);
+
+        return Object.keys(errors).length === 0;
+    }
+
+    // валидация формы контактов
+    validateContacts() {
+        const errors: typeof this.formErrors = {};
+
         if (!this.order.email) {
             errors.email = 'Необходимо указать email';
         }
+
         if (!this.order.phone) {
             errors.phone = 'Необходимо указать телефон';
         }
+
         this.formErrors = errors;
-        this.events.emit('formErrors:change', this.formErrors);
+        this.events.emit('contactsErrors:change', this.formErrors);
+
         return Object.keys(errors).length === 0;
     }
 }

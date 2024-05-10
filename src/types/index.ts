@@ -15,6 +15,7 @@ export interface IProduct {
     title: string;
     category: Category;
     price: number | null;
+    selected?: boolean
 };
 
 // модалка с адресом
@@ -28,6 +29,10 @@ export interface IСontactsForm {
     email: string;
     phone: string
 };
+
+// валидация форм
+export interface IValidForm extends IAddressForm, IСontactsForm {
+}
 
 // оформление заказа
 export interface IOrder extends IAddressForm, IСontactsForm {

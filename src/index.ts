@@ -1,9 +1,9 @@
 import './scss/styles.scss';
 
-import { WebLarekAPI } from './components/WebLarekAPI';
+import {WebLarekAPI} from './components/WebLarekAPI';
 import {API_URL, CDN_URL} from "./utils/constants";
 import {EventEmitter} from "./components/base/events";
-import {AppState, Product} from './components/AppData';
+import {AppState} from './components/AppState';
 import {Page} from "./components/Page";
 import {cloneTemplate, createElement, ensureElement} from "./utils/utils";
 import {Modal} from "./components/common/Modal";
@@ -12,6 +12,7 @@ import {Card} from './components/Card';
 import {Address} from './components/Address';
 import {Contacts} from './components/Contacts';
 import {Success} from './components/common/Success';
+import {IProduct} from './types';
 
 
 const events = new EventEmitter();
@@ -67,20 +68,12 @@ events.on('items:changed', () => {
         const cardCatalog = new Card(cloneTemplate(cardCatalogTemplate), {
             onClick: () => events.emit('card:select', item)
         });
-
-        return cardCatalog.render({
-            id: item.id,
-            description: item.description,
-            image: item.image,
-            title: item.title,
-            category: item.category,
-            price: item.price
-        })
+        return cardCatalog.render({})
     })
 });
 
 // модалка выбранной карточки
-events.on('card:select', (item: Product) => {
+events.on('card:select', (item: IProduct) => {
     events.emit('modal:open');
     const cardItem = new Card(cloneTemplate(cardPreviewTemplate), {
         onClick: () => events.emit('item:addBasket', item)

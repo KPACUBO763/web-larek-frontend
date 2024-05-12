@@ -1,21 +1,17 @@
 import {Model} from "./base/Model";
-import {FormErrors, IAppState, IProduct, IOrder, IValidForm, Category} from "../types";
-
-export class Product extends Model<IProduct> {
-    id: string;
-    description: string;
-    image: string;
-    title: string;
-    category: Category;
-    price: number | null;
-    selected?: boolean
-}
+import {FormErrors, IAppState, IProduct, IOrder, IValidForm} from "../types";
 
 export class AppState extends Model<IAppState> {
     catalog: IProduct[];
     basket: IProduct[] = [];
     order: IOrder = this.getEmptyOrder();
     formErrors: FormErrors = {};
+
+    // установка каталога
+    setCatalog(items: IProduct[]) {
+        this.catalog = items;
+        this.emitChanges('items:changed');
+    };
 
     // шаблон для установки пустых значений
     getEmptyOrder(): IOrder {
@@ -27,12 +23,6 @@ export class AppState extends Model<IAppState> {
             items: [],
             total: 0
         }
-    };
-
-    // установка каталога
-    setCatalog(items: IProduct[]) {
-        this.catalog = items.map(item => new Product(item, this.events));
-        this.emitChanges('items:changed', { catalog: this.catalog });
     };
 
     // добавить товар в корзиину

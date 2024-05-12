@@ -7,18 +7,18 @@ interface ICardActions {
 }
 
 const TCategory: Record<string, string> = {
-    'софт-скил': 'card__category_soft',
-    'другое': 'card__category_other',
-    'дополнительное': 'card__category_additional',
-    'кнопка': 'card__category_button',
-    'хард-скил': 'card__category_hard'
+    'софт-скил': 'soft',
+    'другое': 'other',
+    'дополнительное': 'additional',
+    'кнопка': 'button',
+    'хард-скил': 'hard'
 };
 
 export class Card extends Component<IProduct> {
     protected _title: HTMLHeadingElement;
-    protected _image?: HTMLImageElement;
+    protected _image: HTMLImageElement;
     protected _text?: HTMLParagraphElement;
-    protected _category?: HTMLSpanElement;
+    protected _category: HTMLSpanElement;
     protected _price: HTMLSpanElement;
     protected _button?: HTMLButtonElement;
 
@@ -64,7 +64,7 @@ export class Card extends Component<IProduct> {
     // устанавливает категорию
     set category(value: string) {
         this.setText(this._category, value);
-        this._category.classList.add(TCategory[value])
+        this._category.classList.add(`card__category_${TCategory[value]}`)
     };
 
     // устанавливает цену

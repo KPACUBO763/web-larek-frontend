@@ -5,6 +5,11 @@ export interface IAppState {
     catalog: IProduct[];
     basket: IProduct[];
     order: IOrder | null;
+    formErrors: FormErrors;
+    setCatalog(items: IProduct[]): void;
+    add(card: IProduct): void;
+    remove(id: string): void;
+    setDataOrder(field: keyof IValidForm, value: string): void
 };
 
 // товар
@@ -31,8 +36,7 @@ export interface IСontactsForm {
 };
 
 // валидация форм
-export interface IValidForm extends IAddressForm, IСontactsForm {
-}
+export type IValidForm = Pick<IOrder, 'payment' | 'address' | 'email' | 'phone'>
 
 // оформление заказа
 export interface IOrder extends IAddressForm, IСontactsForm {
@@ -51,6 +55,9 @@ export interface IBasketView {
     items: HTMLElement[];
     total: number
 };
+
+// товар в корзине
+export type IBacketCard = Pick<IProduct, 'title' | 'price'>;
 
 // ошибка в форме
 export type FormErrors = Partial<Record<keyof IOrder, string>>

@@ -164,6 +164,7 @@ events.on('address:open', () => {
 // отправка формы с адресом
 events.on('address:submit', () => {
     appState.order.total = appState.total;
+    appState.selected()
 
     modal.render({
         content: contactsForm.render({

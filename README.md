@@ -51,72 +51,69 @@ yarn build
 
 ### Интерфейсы и типы
 ```
-type Category = "софт-скил" | "другое" | "дополнительное" | "кнопка" | "хард-скил";
-
-// отображение данных на странице
-interface IPage {
-    counter: number;
-    catalog: HTMLElement[]
-};
+export type Category = 'софт-скил' | 'другое' | 'дополнительное' | 'кнопка' | 'хард-скил';
 
 // состояние данных в приложении
-interface IAppState {
+export interface IAppState {
     catalog: IProduct[];
-    basket: string[];
-    order: IOrder | null
+    basket: IProduct[];
+    order: IOrder | null;
+    formErrors: TFormErrors;
+    setCatalog(items: IProduct[]): void;
+    add(card: IProduct): void;
+    remove(id: string): void;
+    setDataOrder(field: keyof IValidForm, value: string): void
 };
 
 // товар
-interface IProduct {
+export interface IProduct {
     id: string;
     description: string;
     image: string;
     title: string;
     category: Category;
-    price: number | null
-};
-
-// модалка
-interface IModalData {
-    content: HTMLElement
+    price: number | null;
+    selected?: boolean
 };
 
 // модалка с адресом
-interface IAddressForm {
+export interface IAddressForm {
     payment: string;
     address: string
 };
 
 // модалка с контактами
-interface IСontactsForm {
+export interface IСontactsForm {
     email: string;
     phone: string
 };
 
-// оформление заказа
-interface IOrder extends IAddressForm, IСontactsForm {
-    price: number
-};
+// валидация форм
+export type IValidForm = Pick<IOrder, 'payment' | 'address' | 'email' | 'phone'>
 
-// успешный заказ
-interface ISuccess {
+// оформление заказа
+export interface IOrder extends IAddressForm, IСontactsForm {
+    items: string[];
     total: number
 };
 
 // состояние формы
-interface IFormState {
+export interface IFormState {
     valid: boolean;
     errors: string[]
 };
 
 // корзина
-interface IBasketView {
+export interface IBasketView {
     items: HTMLElement[];
-    price: number
+    total: number
 };
 
+// товар в корзине
+export type IBacketCard = Pick<IProduct, 'id' | 'title' | 'price'>;
+
 // ошибка в форме
-type FormErrors = Partial<Record<keyof IOrder, string>>
+export type TFormErrors = Partial<Record<keyof IOrder, string>>
 ```
 
 ### Базовые классы
@@ -152,20 +149,25 @@ type FormErrors = Partial<Record<keyof IOrder, string>>
 ### Слой данных (Model)
 - Класс **AppState** отвечает за управление данными.
 **Методы:**
-    - `getCatalog(items: IProductList[])` - возвращает список товаров;
-    - `addProduct()` - добавляет товар в корзину;
-    - `removeProduct()` - удаляет товар из корзины;
-    - `get countProducts()` - возвращает кол-во товаров в корзине;
-    - `get priceProducts()` - возвращает общую стоимость товаров в корзине;
-    - `setDataOrder()` - устанавливает данные о покупателе;
+    - `setCatalog(items: IProduct[])` - возвращает список товаров;
+    - `add(item: IProduct)` - добавляет товар в корзину;
+    - `remove(id: string)` - удаляет товар из корзины;
+    - `get count()` - возвращает кол-во товаров в корзине;
+    - `get total()` - возвращает общую стоимость товаров в корзине;
+    - `selected()` - устанавливает выбранные товары в заказе;
+    - `setDataOrder(field: keyof IValidForm, value: string)` - устанавливает данные о покупателе;
     - `resetBasket()` - очищает корзину;
-    - `resetDataOrder()` - удаляет данные о покупателе.
+    - `resetDataOrder()` - удаляет данные о покупателе;
+    - `resetCount()` - сбрасывает счетчик корзины;
+    - `resetSelected()` - сбрасывает выбранные товары в заказе;
+    - `validateAddress()` - валидация формы адреса;
+    - `validateContacts()` - валидация формы контактов.
 
 ### Слой Presenter
 - Класс **WebLarekAPI** управляет данными между слоем данных (Model) и слоем представления (View).
 **Методы:**
-    - `getProductItem(id: string)` - возвращает товар;
-    - `getProductList()` - возвращает список товаров.
+    - `getProduct(id: string): Promise<IProduct>` - возвращает товар;
+    - `getProductList(): Promise<IProduct[]>` - возвращает список товаров.
 
 ### Слой представления (View)
 - Класс **Page** отвечает за отображение данных на странице.
@@ -174,10 +176,22 @@ type FormErrors = Partial<Record<keyof IOrder, string>>
     - `set catalog(items: HTMLElement[])` - устанавливает каталог товаров;
     - `set locked(value: boolean)` - устанавливает блокировку.
 
-- Класс **basket** отвечает за отображение данных в корзине.
+- Класс **Card** отвечает за отображение карточек на странице.
+**Методы:**
+    - `set title(value: string)` - устанавливает название товара;
+    - `set image(value: string)` - устанавливает картинку;
+    - `set text(value: string)` - устанавливает описание;
+    - `set category(value: string)` - устанавливает категорию;
+    - `set price(value: number | null)` - устанавливает цену;
+    - `get price()` - возвращает цену;
+    - `set button(value: string)` - устанавливает текст кнопки;
+    - `set selected(value: boolean)` - устанавливает статус товара (выбран или нет).
+
+- Класс **Basket** отвечает за отображение данных в корзине.
 **Методы:**
     - `set items(items: HTMLElement[])` - устанавливает добавленные товары;
-    - `set price(price: number)` - устанавливает общую сумму корзины.
+    - `set price(price: number)` - устанавливает общую сумму корзины;
+    - `disableButton(value: boolean)` - блокирует кнопку.
 
 - Класс **Form** отвечает за установку контента в формах и его валидацию.
 **Методы:**
@@ -186,9 +200,9 @@ type FormErrors = Partial<Record<keyof IOrder, string>>
     - `set errors(value: string)` - устанавливает ошибку;
     - `render(state: Partial<T> & IFormState)` - отображает форму.
 
-- Класс **ISuccess** отвечает за отображение суммы списанных средств в окне успешного заказа.
+- Класс **Success** отвечает за отображение суммы списанных средств в окне успешного заказа.
 **Методы:**
-    - `set price(price: number)` - устанавливает сумму списанных средств.
+    - `set total(total: number)` - устанавливает сумму списанных средств.
 
 - Класс **Modal** отвечает за работу модальных окон.
 **Методы:**
@@ -197,11 +211,11 @@ type FormErrors = Partial<Record<keyof IOrder, string>>
     - `close()` - закрывает модальное окно;
     - `render(data: IModalData)` - отображает модальное окно.
 
-- Класс **AddressForm** отвечает за форму с выбором способа оплаты и адреса доставки.
+- Класс **Address** отвечает за форму с выбором способа оплаты и адреса доставки.
 **Методы:**
     - `set address(value: string)` - устанавливает адрес доставки.
 
-- Класс **ContactsForm** отвечает за форму с указанием телефона и почты покупателя.
+- Класс **Contacts** отвечает за форму с указанием телефона и почты покупателя.
 **Методы:**
     - `set phone(value: string)` - устанавливает номер телефона;
-    -  `set email(value: string)` - устанавливает почту.
+    - `set email(value: string)` - устанавливает почту.

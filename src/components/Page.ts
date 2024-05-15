@@ -23,26 +23,25 @@ export class Page extends Component<IPage> {
         this._basket = ensureElement<HTMLButtonElement>('.header__basket');
 
         this._basket.addEventListener('click', () => {
-            this.events.emit('basket:open');
-        });
+            this.events.emit('basket:open')
+        })
     };
 
     // устанавливливает каталог на странице
     set catalog(items: HTMLElement[]) {
-        this._catalog.replaceChildren(...items);
+        this._catalog.replaceChildren(...items)
     };
 
     // устанавливливает счетчик на корзине
     set counter(value: number) {
-        this.setText(this._counter, value);
+        this.setText(this._counter, value)
     };
 
     // блокирует страницу
     set locked(value: boolean) {
-        if (value) {
-            this._wrapper.classList.add('page__wrapper_locked');
-        } else {
-            this._wrapper.classList.remove('page__wrapper_locked');
-        }
+        if (value)
+            this._wrapper.classList.add('page__wrapper_locked')
+        else
+            this._wrapper.classList.remove('page__wrapper_locked')
     }
 }

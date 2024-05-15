@@ -1,11 +1,11 @@
 import {Model} from "./base/Model";
-import {FormErrors, IAppState, IProduct, IOrder, IValidForm} from "../types";
+import {TFormErrors, IAppState, IProduct, IOrder, IValidForm, IBacketCard} from "../types";
 
 export class AppState extends Model<IAppState> {
     catalog: IProduct[];
-    basket: IProduct[] = [];
+    basket: IBacketCard[] = [];
     order: IOrder = this.getEmptyOrder();
-    formErrors: FormErrors = {};
+    formErrors: TFormErrors = {};
 
     // установка каталога
     setCatalog(items: IProduct[]) {
@@ -45,10 +45,21 @@ export class AppState extends Model<IAppState> {
         return this.basket.reduce((total, item) => total + item.price, 0);
     };
 
+    // выбранные товары
+    selected() {
+		this.order.items = this.basket.map((item) => item.id);
+    };
+
     // установка данных покупателя
     setDataOrder(field: keyof IValidForm, value: string) {
         this.order[field] = value;
-    }
+
+        if (!this.validateAddress())
+			return
+
+		if (!this.validateContacts())
+			return
+    };
 
     // очистка корзины
     resetBasket() {
@@ -60,23 +71,35 @@ export class AppState extends Model<IAppState> {
         this.order = this.getEmptyOrder()
     };
 
+    // сброс счетчика
+    resetCount() {
+        return this.basket.length = 0
+    };
+
+    // очистка выбранных продуктов
+    resetSelected() {
+		this.catalog.forEach(items => {
+			items.selected = false;
+		});
+	};
+
     // валидация формы адреса
     validateAddress() {
         const errors: typeof this.formErrors = {};
 
-        if (!this.order.address) {
-            errors.address = 'Необходимо указать адрес';
-        }
-
         if (!this.order.payment) {
-            errors.payment = 'Необходимо указать способ оплаты';
-        }
+            errors.payment = 'Необходимо указать способ оплаты'
+        };
+
+        if (!this.order.address) {
+            errors.address = 'Необходимо указать адрес'
+        };
 
         this.formErrors = errors;
         this.events.emit('addressErrors:change', this.formErrors);
 
         return Object.keys(errors).length === 0;
-    }
+    };
 
     // валидация формы контактов
     validateContacts() {

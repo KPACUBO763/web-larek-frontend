@@ -1,5 +1,5 @@
 import {Component} from "./base/Component";
-import {IProduct, Category} from "../types";
+import {IProduct} from "../types";
 import {ensureElement} from "../utils/utils";
 
 interface ICardActions {
@@ -16,9 +16,9 @@ const TCategory: Record<string, string> = {
 
 export class Card extends Component<IProduct> {
     protected _title: HTMLHeadingElement;
-    protected _image: HTMLImageElement;
+    protected _image?: HTMLImageElement;
     protected _text?: HTMLParagraphElement;
-    protected _category: HTMLSpanElement;
+    protected _category?: HTMLSpanElement;
     protected _price: HTMLSpanElement;
     protected _button?: HTMLButtonElement;
 
@@ -26,9 +26,9 @@ export class Card extends Component<IProduct> {
         super(container);
 
         this._title = ensureElement<HTMLHeadingElement>('.card__title', container);
-        this._image = ensureElement<HTMLImageElement>('.card__image', container);
+        this._image = container.querySelector('.card__image');
         this._text = container.querySelector('.card__text');
-        this._category = container.querySelector('card__category');
+        this._category = container.querySelector('.card__category');
         this._price = container.querySelector('.card__price');
         this._button = container.querySelector('.card__button');
 
@@ -46,11 +46,6 @@ export class Card extends Component<IProduct> {
         this.setText(this._title, value)
     };
 
-    // возвращает название товара
-    get title(): string {
-        return this._title.textContent || ''
-    };
-
     // устанавливает картинку
     set image(value: string) {
         this.setImage(this._image, value, this.title)
@@ -64,18 +59,18 @@ export class Card extends Component<IProduct> {
     // устанавливает категорию
     set category(value: string) {
         this.setText(this._category, value);
-        this._category.classList.add(`card__category_${TCategory[value]}`)
-    };
+        this._category.classList.add(`card__category_${TCategory[value]}`);
+    }
 
     // устанавливает цену
     set price(value: number | null) {
-        this.setText(this._price,
-            value? `${value.toString()} синапсов` : 'Бесценно');
-
-        if (value === null) {
-            this._button.disabled = true;
-            this.setText(this._button, 'Нельзя купить')
-        }
+		this.setText(this._price,
+			value ? `${value.toString()} синапсов` : 'Бесценно'
+		);
+		if (value === null && this._button) {
+			this._button.disabled = true;
+			this.setText(this._button, 'Нельзя купить');
+		}
     };
 
     // возвращает цену

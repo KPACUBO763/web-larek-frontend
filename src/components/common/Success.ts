@@ -19,7 +19,9 @@ export class Success extends Component<ISuccess> {
         this._close = ensureElement<HTMLButtonElement>('.order-success__close', this.container);
 
         if (actions?.onClick) {
-            this._close.addEventListener('click', actions.onClick);
+            if (this._close)
+                this._close.addEventListener('click', actions.onClick);
+            else container.addEventListener('click', actions.onClick);
         }
     };
 

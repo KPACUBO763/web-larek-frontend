@@ -14,24 +14,25 @@ export class Basket extends Component<IBasketView> {
         this._list = ensureElement<HTMLUListElement>('.basket__list', this.container);
         this._price = ensureElement<HTMLSpanElement>('.basket__price', this.container);
         this._button = ensureElement<HTMLButtonElement>('.basket__button', this.container);
-        if (this._button) {
+        if (this._button)
             this._button.addEventListener('click', () => {
-                events.emit('basket:open');
+                events.emit('address:open');
             })
-        }
     };
 
     // отображение товаров в корзине
     set items(items: HTMLElement[]) {
-        if (items.length) {
-            this._list.replaceChildren(...items);
-            this._button.disabled = false
-        } else {
+        if (items.length)
+            this._list.replaceChildren(...items)
+        else
             this._list.replaceChildren(createElement<HTMLParagraphElement>('p', {
                 textContent: 'Корзина пуста'
-            }));
-            this._button.disabled = true
-        }
+            }))
+    }
+
+    //блокировка кнопки
+    disableButton(value: boolean) {
+        this._button.disabled = value;
     }
 
     // отображение цены в корзине

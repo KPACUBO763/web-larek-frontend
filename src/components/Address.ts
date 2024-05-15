@@ -29,6 +29,10 @@ export class Address extends Form<IAddressForm> {
                 this.onInputChange('payment', 'cash')
             })
         }
+
+        this._button.addEventListener('click', () => {
+            this.events.emit('address:submit')
+        })
     };
 
     set address(value: string) {

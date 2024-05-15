@@ -3,7 +3,7 @@ import {ensureElement} from "../../utils/utils";
 import {IEvents} from "../base/events";
 
 interface IModalData {
-    content: HTMLElement;
+    content: HTMLElement
 };
 
 export class Modal extends Component<IModalData> {
@@ -18,30 +18,30 @@ export class Modal extends Component<IModalData> {
 
         this._closeButton.addEventListener('click', this.close.bind(this));
         this.container.addEventListener('click', this.close.bind(this));
-        this._content.addEventListener('click', event => event.stopPropagation());
+        this._content.addEventListener('click', event => event.stopPropagation())
     }
 
     // установить контент в модалке
     set content(value: HTMLElement) {
-        this._content.replaceChildren(value);
-    }
+        this._content.replaceChildren(value)
+    };
 
     // открыть модалку
     open() {
         this.container.classList.add('modal_active');
-        this.events.emit('modal:open');
-    }
+        this.events.emit('modal:open')
+    };
 
     // закрыть модалку
     close() {
         this.container.classList.remove('modal_active');
         this.content = null;
-        this.events.emit('modal:close');
-    }
+        this.events.emit('modal:close')
+    };
 
     render(data: IModalData): HTMLElement {
         super.render(data);
         this.open();
-        return this.container;
+        return this.container
     }
 }

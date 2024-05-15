@@ -1,11 +1,11 @@
-export type Category = "софт-скил" | "другое" | "дополнительное" | "кнопка" | "хард-скил";
+export type Category = 'софт-скил' | 'другое' | 'дополнительное' | 'кнопка' | 'хард-скил';
 
 // состояние данных в приложении
 export interface IAppState {
     catalog: IProduct[];
     basket: IProduct[];
     order: IOrder | null;
-    formErrors: FormErrors;
+    formErrors: TFormErrors;
     setCatalog(items: IProduct[]): void;
     add(card: IProduct): void;
     remove(id: string): void;
@@ -57,7 +57,7 @@ export interface IBasketView {
 };
 
 // товар в корзине
-export type IBacketCard = Pick<IProduct, 'title' | 'price'>;
+export type IBacketCard = Pick<IProduct, 'id' | 'title' | 'price'>;
 
 // ошибка в форме
-export type FormErrors = Partial<Record<keyof IOrder, string>>
+export type TFormErrors = Partial<Record<keyof IOrder, string>>
